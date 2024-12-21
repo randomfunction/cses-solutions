@@ -3,8 +3,8 @@ using namespace std;
 
 using ll = long long;
 using ld = long double;
-
-class SegmentTree{
+//s
+class SegmentTree{ 
     private:
     vector<ll> tree;
     ll n;
