@@ -17,7 +17,7 @@ class SegmentTree{
         ll m= (s+e)/2;
         buildTree(arr, s, m, 2*node+1);
         buildTree(arr, m+1, e, 2*node+2);
-        tree[node]= tree[2*node+1]+ tree[2*node+2];
+        tree[node]= tree[2*node+1]^ tree[2*node+2];
     }
 
     ll querysum(ll s, ll e, ll l ,ll r, ll node){
@@ -31,7 +31,7 @@ class SegmentTree{
         ll m= (s+e)/2;
         ll lm= querysum(s,m,l,r,2*node+1);
         ll rm= querysum(m+1,e,l,r,2*node+2);
-        return lm+rm;
+        return lm^rm;
     }
 
     void updateTree(ll s, ll e, ll i, ll k, ll node){
@@ -46,7 +46,7 @@ class SegmentTree{
         else{
             updateTree(m+1,e,i,k,2*node+2);
         }
-        tree[node]=tree[2*node+1]+ tree[2*node+2];
+        tree[node]=tree[2*node+1]^ tree[2*node+2];
     }
 
     public:
@@ -85,10 +85,10 @@ signed main() {
         mp.push_back({a-1, b-1});
     }
 
-    SegmentTree sumst(x);
+    SegmentTree xorst(x);
 
     for(auto it: mp){
-        cout << sumst.query(it.first, it.second) << endl;
+        cout << xorst.query(it.first, it.second) << endl;
     }
     return 0;
 }

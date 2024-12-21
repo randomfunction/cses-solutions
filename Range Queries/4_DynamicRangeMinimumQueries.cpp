@@ -3,7 +3,7 @@ using namespace std;
 
 using ll = long long;
 using ld = long double;
-class SegmentTree{ 
+class SegmentTree{
     private:
     vector<ll> tree;
     ll n;
@@ -17,21 +17,21 @@ class SegmentTree{
         ll m= (s+e)/2;
         buildTree(arr, s, m, 2*node+1);
         buildTree(arr, m+1, e, 2*node+2);
-        tree[node]= tree[2*node+1]+ tree[2*node+2];
+        tree[node]= min(tree[2*node+1], tree[2*node+2]);
     }
 
-    ll querysum(ll s, ll e, ll l ,ll r, ll node){
+    ll querymin(ll s, ll e, ll l ,ll r, ll node){
         if(s>r||e<l){
-            return 0;
+            return LLONG_MAX; 
         }
         if(s>=l&&e<=r){
             return tree[node];
         }
 
         ll m= (s+e)/2;
-        ll lm= querysum(s,m,l,r,2*node+1);
-        ll rm= querysum(m+1,e,l,r,2*node+2);
-        return lm+rm;
+        ll lm= querymin(s,m,l,r,2*node+1);
+        ll rm= querymin(m+1,e,l,r,2*node+2);
+        return min(lm,rm);
     }
 
     void updateTree(ll s, ll e, ll i, ll k, ll node){
@@ -46,25 +46,24 @@ class SegmentTree{
         else{
             updateTree(m+1,e,i,k,2*node+2);
         }
-        tree[node]=tree[2*node+1]+ tree[2*node+2];
+        tree[node]= min(tree[2*node+1], tree[2*node+2]);
     }
 
     public:
     SegmentTree(vector<ll> &arr){
         n= arr.size();
-        tree.resize(4*n,0);
-        buildTree(arr,0,n-1,0);
+        tree.resize(4*n, LLONG_MAX);
+        buildTree(arr, 0, n-1, 0);
     }
 
     ll query(ll l,ll r){
-        return querysum(0,n-1,l,r,0);
+        return querymin(0, n-1, l, r, 0);
     }
 
     void update(ll i, ll k){
-        updateTree(0,n-1,i,k,0);
+        updateTree(0, n-1, i, k, 0);
     }
 };
-
 
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -74,21 +73,27 @@ signed main() {
     cin >> n >> q;
 
     vector<ll> x(n);
-    for(int i = 0; i < n; i++){
+    for (int i = 0; i < n; i++) {
         cin >> x[i];
     }
 
-    vector<pair<ll,ll>> mp;
-    for(int i = 0; i < q; i++){
-        ll a, b;
-        cin >> a >> b;
-        mp.push_back({a-1, b-1});
+    vector<ll> choice(q);
+    vector<pair<ll, ll>> mp;
+    for (int i = 0; i < q; i++) {
+        ll a, b, c;
+        cin >> a >> b >> c;
+        choice[i] = a;
+        mp.push_back({b - 1, c}); 
     }
 
-    SegmentTree sumst(x);
+    SegmentTree minst(x);
 
-    for(auto it: mp){
-        cout << sumst.query(it.first, it.second) << endl;
+    for (int i = 0; i < q; i++) {
+        if (choice[i] == 1) {
+            minst.update(mp[i].first, mp[i].second);
+        } else {
+            cout << minst.query(mp[i].first, mp[i].second - 1) << endl; 
+        }
     }
     return 0;
 }

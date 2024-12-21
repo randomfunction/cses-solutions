@@ -3,7 +3,6 @@ using namespace std;
 
 using ll = long long;
 using ld = long double;
-//s
 class SegmentTree {
 private:
     vector<ll> tree;
@@ -86,13 +85,13 @@ signed main() {
         mp.push_back({b - 1, c}); 
     }
 
-    SegmentTree minst(x);
+    SegmentTree sumst(x);
 
     for (int i = 0; i < q; i++) {
         if (choice[i] == 1) {
-            minst.update(mp[i].first, mp[i].second);
+            sumst.update(mp[i].first, mp[i].second);
         } else {
-            cout << minst.query(mp[i].first, mp[i].second - 1) << endl; 
+            cout << sumst.query(mp[i].first, mp[i].second - 1) << endl; 
         }
     }
     return 0;
