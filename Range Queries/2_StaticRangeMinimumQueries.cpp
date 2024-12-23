@@ -65,6 +65,53 @@ class SegmentTree{
     }
 };
 
+class MinSqrtDc{
+    private:
+    vector<ll> arr;
+    vector<ll> block;
+    ll blocksize;
+
+    public:
+    MinSqrtDc(vector<ll> arr){
+        this->arr=arr;
+        ll n=arr.size();
+        blocksize = static_cast<ll>(sqrt(n)) + 1;
+        block.assign(blocksize, LLONG_MAX);
+        for (ll i = 0; i < n; ++i) {
+            block[i / blocksize] = min(block[i / blocksize], arr[i]);
+        }
+    }
+
+    void update(ll idx, ll value) {
+        ll blockIdx = idx / blocksize;
+        arr[idx] = value;
+        block[blockIdx] = LLONG_MAX;
+        ll start = blockIdx * blocksize;
+        ll end = min(static_cast<ll>(arr.size()), (blockIdx + 1) * blocksize);
+        for (ll i = start; i < end; ++i) {
+            block[blockIdx] = min(block[blockIdx], arr[i]);
+        }
+    }
+
+    ll query(ll l, ll r) {
+        ll minVal = LLONG_MAX;
+        while (l < r && l % blocksize != 0) {
+            minVal = min(minVal, arr[l]);
+            ++l;
+        }
+        while (l + blocksize <= r) {
+            minVal = min(minVal, block[l / blocksize]);
+            l += blocksize;
+        }
+        while (l <= r) {
+            minVal = min(minVal, arr[l]);
+            ++l;
+        }
+        return minVal;
+    }
+};
+
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(0);
@@ -85,9 +132,12 @@ signed main() {
     }
 
     SegmentTree minst(x);
+    MinSqrtDc sqrt(x);
+    
 
     for(auto it: mp){
         cout << minst.query(it.first, it.second) << endl;
+        // cout<<sqrt.query(it.first, it.second)<<endl; ->> TLE on 2nd test
     }
     return 0;
 }
